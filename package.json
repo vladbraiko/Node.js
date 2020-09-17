@@ -19,6 +19,19 @@
   },
   "homepage": "https://github.com/vladbraiko/Node.js#readme",
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.1.2"
+  },
+  "dependencies": {},
+  "files.autoSave": "onFocusChange",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
   }
 }
