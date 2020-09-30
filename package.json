@@ -28,7 +28,9 @@
     "nodemon": "^2.0.4",
     "prettier": "^2.1.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "mongoose": "^5.10.7"
+  },
   "files.autoSave": "onFocusChange",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {

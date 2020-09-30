@@ -1,31 +1,3 @@
-// const contacts = require("./contacts");
-// const argv = require("yargs").argv;
-
-// function invokeAction({ action, id, name, email, phone }) {
-//   switch (action) {
-//     case "list":
-//       contacts.listContacts();
-//       break;
-
-//     case "get":
-//       contacts.getContactById(id);
-//       break;
-
-//     case "add":
-//       contacts.addContact(name, email, phone);
-//       break;
-
-//     case "remove":
-//       contacts.removeContact(id);
-//       break;
-
-//     default:
-//       console.warn("\x1B[31m Unknown action type!");
-//   }
-// }
-
-// invokeAction(argv);
-
 const dotenv = require("dotenv");
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -34,27 +6,40 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const contactsRouter = require("./api/contacts/routes");
+const mongoose = require("mongoose");
 
-const app = express();
-app.use(morgan("dev"));
-app.use(cors());
-app.use(express.json());
+const runServer = async () => {
+  try {
+    await mongoose.connect(process.env.DB_URI, { useUnifiedTopology: true });
+    console.log("Database connection successful");
 
-app.use("/contacts", contactsRouter);
+    const app = express();
+    app.use(morgan("dev"));
+    app.use(cors());
+    app.use(express.json());
 
-app.use(async (err, req, res, next) => {
-  if (err) {
-    let logs = await fs.readFile("errors.logs.json", { encoding: "utf-8" });
-    logs = JSON.parse(logs);
-    logs.push({
-      date: new Date().toISOString(),
-      method: req.method,
-      url: req.originalUrl,
-      message: err.message,
+    app.use("/contacts", contactsRouter);
+
+    app.use(async (err, req, res, next) => {
+      if (err) {
+        let logs = await fs.readFile("errors.logs.json", { encoding: "utf-8" });
+        logs = JSON.parse(logs);
+        logs.push({
+          date: new Date().toISOString(),
+          method: req.method,
+          url: req.originalUrl,
+          message: err.message,
+        });
+        logs = JSON.stringify(logs);
+        await fs.writeFile("errors.logs.json", logs);
+      }
     });
-    logs = JSON.stringify(logs);
-    await fs.writeFile("errors.logs.json", logs);
-  }
-});
 
-app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
+    app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
+  } catch (e) {
+    console.log("Database connection error(");
+    process.exit(1);
+  }
+};
+
+runServer();
